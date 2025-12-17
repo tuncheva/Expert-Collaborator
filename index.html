@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hangman Game</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #a8edea, #fed6e3); /* soft gradient */
+    }
+
+    .game {
+      background: #ffffffcc; /* soft white with slight transparency */
+      padding: 30px 25px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 350px;
+    }
+
+    h1 {
+      margin-bottom: 15px;
+      font-size: 28px;
+      color: #333;
+    }
+
+    canvas {
+      border: 1px solid #eee;
+      background-color: #fdfdfd;
+      border-radius: 8px;
+      margin: 15px 0;
+    }
+
+    #word {
+      font-size: 28px;
+      letter-spacing: 8px;
+      margin: 15px 0;
+      color: #444;
+    }
+
+    input {
+      font-size: 18px;
+      padding: 6px;
+      width: 50px;
+      text-align: center;
+      border-radius: 5px;
+      border: 1.5px solid #bbb;
+      outline: none;
+      transition: border 0.2s ease;
+    }
+
+    input:focus {
+      border-color: #888;
+    }
+
+    button {
+      padding: 8px 18px;
+      font-size: 16px;
+      margin-top: 10px;
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      background-color: #88c0d0;
+      color: #fff;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #5e99a2;
+    }
+
+    #wrong {
+      color: #d9534f;
+      font-weight: bold;
+    }
+
+    #message {
+      margin-top: 15px;
+      font-weight: bold;
+      font-size: 18px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+<div class="game">
+  <h1>Hangman</h1>
+
+  <canvas id="hangman" width="200" height="200"></canvas>
+
+  <div id="word"></div>
+
+  <p>Wrong guesses: <span id="wrong"></span></p>
+
+  <input type="text" id="guessInput" maxlength="1" autofocus />
+  <br />
+  <button onclick="guessLetter()">Guess</button>
+
+  <p id="message"></p>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
