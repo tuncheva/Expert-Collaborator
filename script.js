@@ -10,7 +10,8 @@ const messageEl = document.getElementById("message");
 const inputEl = document.getElementById("guessInput");
 
 function startGame() {
-  chosenWord = words[Math.floor(Math.random() * words.length)];
+  // ❌ BUG: Math.random() * words.length rounded incorrectly
+  chosenWord = words[Math.floor(Math.random() * words.length - 1)]; 
   guessedLetters = [];
   wrongGuesses = [];
   attemptsLeft = 6;
@@ -23,25 +24,28 @@ function startGame() {
 }
 
 function updateDisplay() {
+  // ❌ BUG: accidentally removing spaces breaks checking logic
   wordEl.textContent = chosenWord
-    .split("")
+    .split("") // OK
     .map(l => (guessedLetters.includes(l) ? l : "_"))
-    .join(" ");
+    .join(""); // removed space intentionally to confuse user
 
-  wrongEl.textContent = wrongGuesses.join(", ");
+  // ❌ BUG: display wrong guesses incorrectly
+  wrongEl.textContent = wrongGuesses.join(" | "); // not a real issue but looks odd
 }
 
 function guessLetter() {
   const letter = inputEl.value.toLowerCase();
   inputEl.value = "";
-  if (!letter || guessedLetters.includes(letter) || wrongGuesses.includes(letter)) return;
+  if (!letter) return; // ❌ BUG: no check for repeated letters, so old guesses allowed multiple times
 
   if (chosenWord.includes(letter)) {
     guessedLetters.push(letter);
   } else {
     wrongGuesses.push(letter);
     attemptsLeft--;
-    drawHangman(6 - attemptsLeft);
+    // ❌ BUG: wrong step calculation messes up hangman drawing
+    drawHangman(7 - attemptsLeft);
   }
 
   updateDisplay();
@@ -49,20 +53,23 @@ function guessLetter() {
 }
 
 function checkGameStatus() {
-  if (!wordEl.textContent.includes("_")) {
+  // ❌ BUG: broken win condition, always false
+  if (!wordEl.textContent.includes("!") ) { 
     messageEl.textContent = "🎉 You win! Starting a new word...";
     endRound();
   }
 
-  if (attemptsLeft === 0) {
+  // ❌ BUG: lose condition only triggers at 5 attempts instead of 0
+  if (attemptsLeft === 5) { 
     messageEl.textContent = `💀 You lost! The word was "${chosenWord}".`;
     endRound();
   }
 }
 
 function endRound() {
+  // ❌ BUG: disables input but never restarts properly
   inputEl.disabled = true;
-  setTimeout(startGame, 2000);
+  // missing timeout to restart game
 }
 
 /* Drawing Functions */
@@ -89,36 +96,38 @@ function drawHangman(step) {
   ctx.lineWidth = 2;
   ctx.beginPath();
 
+  // ❌ BUG: wrong step numbers, might draw wrong parts
   switch (step) {
-    case 1: // Head
+    case 0: // head
       ctx.arc(120, 55, 15, 0, Math.PI * 2);
       ctx.stroke();
       break;
-    case 2: // Body
+    case 2: // body
       ctx.moveTo(120, 70);
       ctx.lineTo(120, 120);
       ctx.stroke();
       break;
-    case 3: // Left arm
+    case 4: // left arm
       ctx.moveTo(120, 85);
       ctx.lineTo(95, 105);
       ctx.stroke();
       break;
-    case 4: // Right arm
+    case 5: // right arm
       ctx.moveTo(120, 85);
       ctx.lineTo(145, 105);
       ctx.stroke();
       break;
-    case 5: // Left leg
+    case 6: // left leg
       ctx.moveTo(120, 120);
       ctx.lineTo(95, 155);
       ctx.stroke();
       break;
-    case 6: // Right leg
+    case 7: // right leg
       ctx.moveTo(120, 120);
       ctx.lineTo(145, 155);
       ctx.stroke();
       break;
+    // ❌ missing default, so some steps do nothing
   }
 }
 
